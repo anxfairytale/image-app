@@ -59,7 +59,19 @@ router.get('/image/:id', async (req, res) => {
         return res.status(500).json(err);
     }
 })
-
+router.get('video/:id',async(req,res)=>{
+    try{
+        const {id}=req.params
+        const image=await Image.findByPk(id);
+        if(!image){
+            return res.status(404).json({message:'Image not found'})
+        }
+        console.log(image)
+        res.status(200).json(image);
+    }catch(err){
+        return res.status(500).json(err);
+    }
+})
 router.post('/image', authenticateToken, upload.fields([{name:'image',maxCount:1},{name:'video',maxCount:1}]), async (req, res) => {
   try {
     console.log("USER:", req.user)

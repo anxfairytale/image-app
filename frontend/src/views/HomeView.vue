@@ -1,6 +1,6 @@
 <template>
   <section class="page">
-    <h1>Approved Images</h1>
+    <h1>Video Feed</h1>
 
     <div class="grid">
       <ImageCard

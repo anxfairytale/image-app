@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import UploadView from '../views/UploadView.vue'
 import AdminView from '../views/AdminView.vue'
+import VideoDetailView from '../views/VideoDetailView.vue'
 function getUserRole(){
     const token=localStorage.getItem('token')
     if(!token) return null
@@ -19,6 +20,7 @@ const routes = [
   { path: '/home',component:HomeView, meta:{requiresAuth:true}},
   { path: '/upload', component: UploadView, meta:{requiresAuth:true,role:'user'}},
   { path: '/admin', component: AdminView ,meta:{requiresAuth:true, role:'admin'}},
+  {path: '/video/:id',component:VideoDetailView}
   
 ]
 

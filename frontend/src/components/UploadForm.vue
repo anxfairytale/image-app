@@ -11,13 +11,12 @@
     </div>
 
     <div>
-      <label>Image</label>
+      <label>Thumbnail</label>
       <input type="file" @change="handleFile" />
     </div>
     <div>
       <label>Video</label>
       <input type="file" accept="video/*" @change="handleVideo"/>
-  
     </div>
     <p v-if="message" class="success">{{ message }}</p>
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -63,7 +62,7 @@ export default {
         return
       }
       if(!this.selectedFile && !this.video){
-        this.errorMessage='Please upload at leasr an image or a video.'
+        this.errorMessage='Please upload at least an image or a video.'
         return
       }
       if(this.video){
@@ -72,6 +71,9 @@ export default {
           this.errorMessage='Video size must be less than 50MB'
           return
         }
+      }
+      if(this.video && !this.selectedFile){
+        this.errorMessage='Please Upload a thumbnail for the Video in the image field'
       }
       const formData = new FormData()
       formData.append('title', this.title)

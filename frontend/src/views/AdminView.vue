@@ -1,6 +1,6 @@
 <template>
   <section class="page">
-    <h1>Pending Images</h1>
+    <h1>Pending Approval</h1>
 
     <div class="grid">
       <div v-for="image in images" :key="image.id" class="card">
