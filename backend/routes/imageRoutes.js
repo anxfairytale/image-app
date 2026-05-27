@@ -49,7 +49,7 @@ router.get('/image', async (req, res) => {
 router.get('/image/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const image = await Image.findByPk(id);
+        const image = await Image.findOne({where:{id},raw:true});
         if (!image) {
             return res.status(404).json({ message: 'Image not found' })
         }
@@ -59,12 +59,12 @@ router.get('/image/:id', async (req, res) => {
         return res.status(500).json(err);
     }
 })
-router.get('video/:id',async(req,res)=>{
+router.get('/video/:id',async(req,res)=>{
     try{
         const {id}=req.params
-        const image=await Image.findByPk(id);
+        const image=await Image.findOne({where:{id}});
         if(!image){
-            return res.status(404).json({message:'Image not found'})
+            return res.status(404).json({message:'Media not found'})
         }
         console.log(image)
         res.status(200).json(image);
@@ -108,15 +108,17 @@ router.post('/image', authenticateToken, upload.fields([{name:'image',maxCount:1
 router.put('/image/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const image = await Image.findByPk(id);
-        if (!image) {
-            return res.status(404).json({ message: 'Image not found' });
-        }
-        image.title = req.body.title;
-        image.description = req.body.description;
-        image.imageURL = req.body.imageURL;
-
-        await image.save()
+        const image = await Image.findOne({where:{id}});
+        await Image.update(
+            {
+                title:req.body.title,
+                description:req.body.description,
+                imageURL:req.body.imageURL
+            },
+            {
+                where:{id}
+            }
+        );
         res.status(201).json({ message: 'image updated succefully' })
     } catch (err) {
         return res.status(500).json(err);
@@ -126,7 +128,7 @@ router.put('/image/:id', async (req, res) => {
 router.delete('/image/:id', async (req, res) => {
     try {
         const { id } = req.params
-        const image = await Image.findByPk(id);
+        const image = await Image.findOne({where:{id}});
         if (!image) {
             return res.status(404).json({ message: 'image not found' })
         }
@@ -140,12 +142,14 @@ router.delete('/image/:id', async (req, res) => {
 
 router.patch('/image/:id/approve',async(req,res)=>{
     try{
-        const image=await Image.findByPk(req.params.id);
-        if(!image){
-            return res.status(404).json({message:'Image not found'});
-        }
-        image.status='approved';
-        await image.save();
+        await Image.update(
+            {
+                status:'approved'
+            },
+            {
+                where:{id: req.params.id}
+            }
+        )
         res.status(200).json({
             message:'Image approved successfully',image
         });
@@ -155,12 +159,14 @@ router.patch('/image/:id/approve',async(req,res)=>{
 });
 router.patch('/image/:id/reject',async(req,res)=>{
     try{
-        const image=await Image.findByPk(req.params.id);
-        if(!image){
-            return res.status(404).json({message:'Image Not found'});
-        }
-        image.status='rejected';
-        await image.save();
+        await Image.update(
+            {
+                status:'rejected'
+            },
+            {
+                where:{id:req.params.id}
+            }
+        )
         res.status(200).json({
             message:'Image rejected successfully',
             image

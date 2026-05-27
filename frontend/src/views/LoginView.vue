@@ -3,24 +3,26 @@
     <h1>{{ mode === "login" ? "Login" : "Sign Up" }}</h1>
 
     <form @submit.prevent="submit" class="form">
-      <div v-if="mode === 'signup'">
+      <div v-if="mode === 'signup'" class="form-controls">
         <label>Name</label>
-        <input type="text" v-model="name" />
+        <input type="text" v-model="name" class="input-control"/>
       </div>
 
-      <div>
+      <div class="form-controls">
         <label>Email</label>
         <input type="email" v-model="email" />
         <button type="button" @click="sendOtp" v-if="mode === 'signup'">
           Send OTP
         </button>
       </div>
-      <div v-if="mode === 'signup'">
+      <div v-if="otpSent" >
+        <div v-if="mode === 'signup'" class="form-controls">
         <label>OTP</label>
         <input type="password" v-model="otp" />
         <button type="button" @click="verifyOtp">Verify OTP</button>
       </div>
-      <div>
+      </div>
+      <div class="form-controls" v-if="(mode==='signup' && emailVerified===true) || mode==='login'">
         <label>Password</label>
         <input type="password" v-model="password" />
       </div>
@@ -54,6 +56,7 @@ export default {
       successMessage: "",
       otp: null,
       emailVerified: false,
+      otpSent: false
     };
   },
 
@@ -70,6 +73,8 @@ export default {
           email: this.email});
           console.log(response);
           this.successMessage = response.data.message;
+          this.otpSent=true
+
       } catch (err) {
         this.errorMessage = "Failed to send otp";
       }
@@ -168,3 +173,24 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+label{
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.5rem
+}
+input{
+  display: block;
+  width: 100%;
+  font:inherit;
+  padding: 0.15rem;
+  height: 30px;
+}
+button{
+  display: block;
+  margin-top: 0.5rem;
+  background-color: #222;
+  color: white;
+}
+</style>

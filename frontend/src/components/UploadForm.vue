@@ -12,11 +12,11 @@
 
     <div>
       <label>Thumbnail</label>
-      <input type="file" @change="handleFile" />
+      <input type="file" @change="handleFile" class="file-upload"/>
     </div>
     <div>
       <label>Video</label>
-      <input type="file" accept="video/*" @change="handleVideo"/>
+      <input type="file" accept="video/*" @change="handleVideo" class="file-upload"/>
     </div>
     <p v-if="message" class="success">{{ message }}</p>
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import api from "../services/axios"
 export default {
   data() {
     return {
@@ -74,6 +75,7 @@ export default {
       }
       if(this.video && !this.selectedFile){
         this.errorMessage='Please Upload a thumbnail for the Video in the image field'
+        return
       }
       const formData = new FormData()
       formData.append('title', this.title)
@@ -81,29 +83,45 @@ export default {
       if(this.selectedFile) formData.append('image', this.selectedFile)
       if(this.video) formData.append('video',this.video);
       try {
-        const response = await fetch('http://localhost:5000/api/image', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          body: formData
-        })
-
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.message || 'Upload failed')
-        }
-
-        this.message = data.message
+        const response=await api.post('/image',formData,
+          {
+            headers:{
+              Authorization:`Bearer ${token}`
+            }
+          }
+        )
+        console.log(response.data)
+        this.message = response.data.message
         this.title = ''
         this.description = ''
         this.selectedFile = null,
         this.video=null
       } catch (err) {
-        this.errorMessage = err.message
+        this.errorMessage = err.response?.data?.message || err.message
       }
     }
   }
 }
 </script>
+<style scoped>
+label{
+  display: block;
+  width: 100%;
+  font-weight: bold;
+  margin-bottom: 0.5rem
+  
+}
+input,textarea{
+  display: block;
+  width: 100%;
+  padding: 0.15rem;
+  height: 30px;
+}
+button{
+  display: block;
+  margin-top: 0.5rem;
+  background-color: #222;
+  color: white;
+}
+
+</style>

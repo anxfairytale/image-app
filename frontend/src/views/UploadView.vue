@@ -1,6 +1,6 @@
 <template>
   <section class="page">
-    <h1>Upload Image</h1>
+    <h1>Upload Media</h1>
 
     <UploadForm />
   </section>
